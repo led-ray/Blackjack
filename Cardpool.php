@@ -1,33 +1,38 @@
 <?php
 /**
  * ブラックジャックのゲームに使用するトランプデッキのクラスです
- * 52枚のトランプを用い、同じカードが複数回引かれないようにします
  */
 
 namespace Vendor;
 
+require_once 'Card.php'; // カードのクラス
+
 class Cardpool
 {
-    protected $cards; //山札
+    private $cards; //山札
 
     public function __construct()
     {
-        $this->cards = range(1, 52); // 52枚のカードを生成
+        $this->cards = $this->makedeck();
     }
 
-    // 各プレイヤーが引くカードを決めるメソッド
+    public function makedeck()
+    {
+        $suit = ["スペード","クラブ","ダイヤ","ハート"];
+        $number = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+        $deck = [];
+        foreach ($suit as $s) {
+            foreach ($number as $n) {
+                $deck[] = new Card($s, $n); // 52枚のカードを生成
+            }
+        }
+        shuffle($deck); // 山札をシャッフル
+        return $deck;
+    }
+
+    // カードを引くメソッド
     public function choosecard()
     {
-        // 乱数を生成してインデックスとする
-        $rnd = random_int(0, count($this->cards)-1);
-
-        // 選ばれたカードの値を取得
-        $card = $this->cards[$rnd];
-
-        // 選ばれたカードをデッキから削除
-        array_splice($this->cards, $rnd, 1);
-
-        // 選ばれたカードの値を返す
-        return $card;
+        return array_pop($this->cards);
     }
 }
