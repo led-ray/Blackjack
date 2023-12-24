@@ -7,7 +7,7 @@ namespace Vendor;
 
 class Hand
 {
-    protected $cards; // 持ち札
+    private $cards; // 持ち札
 
     public function __construct()
     {
@@ -15,43 +15,25 @@ class Hand
     }
 
     // 引いたカードを持ち札に追加するメソッド
-    public function drawcard($value)
+    public function drawcard($card)
     {
-        // 引いたカードを追加
-        array_push($this->cards, $value);
-
-        // 引いたカードの説明を出力
-        $suit="";
-        if (intdiv($value, 13)===0) {
-            $suit = "スペード";
-        } elseif (intdiv($value, 13)===1) {
-            $suit = "クラブ";
-        } elseif (intdiv($value, 13)===2) {
-            $suit = "ダイヤ";
-        } elseif (intdiv($value, 13)===3) {
-            $suit = "ハート";
-        }
-
-        $number="";
-        if ($value % 13 === 11) {
-            $number = "J";
-        } elseif ($value % 13 === 12) {
-            $number = "Q";
-        } elseif ($value % 13 === 0) {
-            $number = "K";
-        } else {
-            $number = strval($value % 13);
-        }
-
-        return $suit."の".$number;
+        array_push($this->cards, $card);
+        return $card->getcard();
     }
 
     // 持ち札の点数を計算するメソッド
     public function calcpoints()
     {
+        $values = [ // 点を数値化する連想配列
+            "2" => 2, "3" => 3, "4" => 4, "5" => 5,
+            "6" => 6, "7" => 7, "8" => 8, "9" => 9, "10" => 10,
+            "J" => 10, "Q" => 10, "K" => 10, "A" => 1
+        ];
+        
+        // カードのランクを取得して点数を計算
         $points = 0;
         foreach ($this->cards as $card) {
-            $points = $points + min(($card-1) % 13 + 1, 10);
+            $points += $values[$card->getnum()];
         }
         return $points;
     }
